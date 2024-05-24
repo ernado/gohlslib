@@ -262,7 +262,7 @@ func (m *Media) Unmarshal(buf []byte) error {
 		case strings.HasPrefix(line, "#EXTINF:"):
 			line = line[len("#EXTINF:"):]
 			parts := strings.SplitN(line, ",", 2)
-			if len(parts) != 2 {
+			if len(parts) > 2 {
 				return fmt.Errorf("invalid EXTINF: %s", line)
 			}
 
@@ -273,7 +273,9 @@ func (m *Media) Unmarshal(buf []byte) error {
 			}
 
 			curSegment.Duration = du
-			curSegment.Title = strings.TrimSpace(parts[1])
+			if len(parts) == 2 {
+				curSegment.Title = strings.TrimSpace(parts[1])
+			}
 
 		case strings.HasPrefix(line, "#EXT-X-BYTERANGE:"):
 			line = line[len("#EXT-X-BYTERANGE:"):]
